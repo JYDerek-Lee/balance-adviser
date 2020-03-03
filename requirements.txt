@@ -8,3 +8,4 @@ six
 tzlocal
 Werkzeug
 yfinance
+pycrypto
