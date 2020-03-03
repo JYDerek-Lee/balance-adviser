@@ -5,10 +5,10 @@ from Crypto.Cipher import AES
 
 _EPOCH = datetime(1970, 1, 1, tzinfo=pytz.utc)
 
-
+# connection crypto temperory unused
 def decryptString(strings,
-                  pad=lambda s: s + (BLOCK_SIZE - len(s) %
-                                     BLOCK_SIZE) * PADDING,
+                #   pad=lambda s: s + (BLOCK_SIZE - len(s) %
+                                    #  BLOCK_SIZE) * PADDING,
                   unpad=lambda s: s[:-ord(s[len(s) - 1:])]):
     try:
         strings = strings.replace("~", "=")
