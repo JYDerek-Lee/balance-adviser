@@ -7,5 +7,6 @@ requests
 six
 tzlocal
 Werkzeug
-yfinance
 pycrypto
+yfinance
+lxml
