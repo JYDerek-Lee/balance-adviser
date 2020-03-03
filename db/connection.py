@@ -195,9 +195,8 @@ class MySQLLogWrap(object):
                         raise RuntimeError("Connection Failed!")
                     connected = False
                     sleep_time = 2
-                    logger.writeLog(
-                        3,
-                        "Sleep %d seconds before trying reconnect." % (sleep_time,))
+                    logger.writeLog(3,
+                                    "Sleep %d seconds before trying reconnect." % (sleep_time,))
                     time.sleep(sleep_time)
                 else:
                     logger.writeException(err)
@@ -210,7 +209,9 @@ class MySQLLogWrap(object):
         try:
             mysql_pre = app.app_ctx_globals_class.mysql
             assert mysql_pre
-        except Exception as ex:
+        except Exception:
+            logger.writeLog(3,
+                            "Initiate connection")
             mysql_pre = app.app_ctx_globals_class.mysql = MySQLLogWrap(app)
 
         try:
@@ -258,7 +259,7 @@ class MySQLLogWrap(object):
         if self.con:
             try:
                 self.con.close()
-            except Exception as ex:
+            except Exception:
                 pass
             logger.writeLog(3,
                             "DB Connection Close. ({0})".format(self.con.db))
@@ -291,7 +292,6 @@ class MySQLSingleSystemWrap:
                 retry_count += 1
                 if not self.con:
                     self.connect(iniconfig, targetdb)
-                    connected = True
 
                 cursor = self.con.cursor()
                 self.con.begin()
@@ -313,7 +313,6 @@ class MySQLSingleSystemWrap:
                         logger.writeLog(0,
                                         "We tried three times in MySQLSingleSystemWrap.")
                         raise RuntimeError("Connection Failed!")
-                    connected = False
                     sleep_time = 2
                     logger.writeLog(3,
                                     "Sleep %d seconds before trying reconnect." % (sleep_time,))
