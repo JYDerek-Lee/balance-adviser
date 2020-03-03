@@ -68,20 +68,20 @@ class MySQLWrap(object):
                                 (str(err.args[0]),))
                 if isinstance(err, pymysql.OperationalError):
                     if retry_count >= 3:
-                        logger.writeLog(0, "We tried three times.")
+                        logger.writeLog(0,
+                                        "We tried three times.")
                         raise RuntimeError("Connection Failed!")
                     connected = False
                     sleep_time = 2
-                    logger.writeLog(
-                        3, "Sleep %d seconds before trying reconnect." % (sleep_time,))
+                    logger.writeLog(3,
+                                    "Sleep %d seconds before trying reconnect." % (sleep_time,))
                     time.sleep(sleep_time)
                 else:
                     logger.writeException(err)
                     raise err
 
             except Exception as ex:
-                raise ex[1] if len(ex) > 1 else ex
-
+                raise ex
 
     def _connectImpl(self):
         if self.con:
@@ -104,8 +104,9 @@ class MySQLWrap(object):
         if db_config['UID'] == -1:
             raise AttributeError("UID Error", 1)
 
-        logger.writeLog(1, "DB Connection Start ({0}).".format(
-            db_config['DATABASE']))
+        logger.writeLog(1,
+                        "DB Connection Start ({0}).".format(
+                            db_config['DATABASE']))
         self.con = pymysql.connect(host=db_config['SERVER'],
                                    user=db_config['UID'],
                                    passwd=db_config['PWD'],
@@ -113,17 +114,18 @@ class MySQLWrap(object):
                                    port=int(db_config['PORT']),
                                    charset='utf8mb4')
         self.con.autocommit(True)
-        logger.writeLog(
-            1, "DB Connection Succesful. ({0})".format(self.con.db))
+        logger.writeLog(1,
+                        "DB Connection Succesful. ({0})".format(self.con.db))
 
     def _closeImpl(self):
         if self.con:
             try:
                 self.con.close()
             except Exception as ex:
+                logger.writeException(ex)
                 pass
-            logger.writeLog(
-                3, "DB Connection Close. ({0})".format(self.con.db))
+            logger.writeLog(3,
+                            "DB Connection Close. ({0})".format(self.con.db))
             self.con = None
 
 
@@ -184,7 +186,8 @@ class MySQLLogWrap(object):
                 return cursor
 
             except pymysql.MySQLError as err:
-                logger.writeLog(0, "MySQL Error code : %s" %
+                logger.writeLog(0,
+                                "MySQL Error code : %s" %
                                 (str(err.args[0]),))
                 if isinstance(err, pymysql.OperationalError):
                     if retry_count >= 3:
@@ -193,13 +196,14 @@ class MySQLLogWrap(object):
                     connected = False
                     sleep_time = 2
                     logger.writeLog(
-                        3, "Sleep %d seconds before trying reconnect." % (sleep_time,))
+                        3,
+                        "Sleep %d seconds before trying reconnect." % (sleep_time,))
                     time.sleep(sleep_time)
                 else:
                     logger.writeException(err)
                     raise err
             except Exception as ex:
-                raise ex[1] if len(ex) > 1 else ex
+                raise ex
 
     @staticmethod
     def endConnection(app, commit=False):
@@ -212,7 +216,8 @@ class MySQLLogWrap(object):
         try:
             mysql_pre.disconnect()
         except pymysql.MySQLError as err:
-            logger.writeLog(0, "MySQL endConnection Error code : %s" %
+            logger.writeLog(0,
+                            "MySQL endConnection Error code : %s" %
                             (str(err.args[0]),))
 
     def _connectImpl(self):
@@ -236,8 +241,9 @@ class MySQLLogWrap(object):
         if db_config['UID'] == -1:
             raise AttributeError("UID Error", 1)
 
-        logger.writeLog(1, "DB Connection Start ({0}).".format(
-            db_config['DATABASE']))
+        logger.writeLog(1,
+                        "DB Connection Start ({0}).".format(
+                            db_config['DATABASE']))
         self.con = pymysql.connect(host=db_config['SERVER'],
                                    user=db_config['UID'],
                                    passwd=db_config['PWD'],
@@ -245,8 +251,8 @@ class MySQLLogWrap(object):
                                    port=int(db_config['PORT']),
                                    charset='utf8mb4')
         self.con.autocommit(True)
-        logger.writeLog(1, "DB Connection Succesful. ({0})".format(
-            db_config['DATABASE']))
+        logger.writeLog(1,
+                        "DB Connection Succesful. ({0})".format(db_config['DATABASE']))
 
     def _closeImpl(self):
         if self.con:
@@ -254,8 +260,8 @@ class MySQLLogWrap(object):
                 self.con.close()
             except Exception as ex:
                 pass
-            logger.writeLog(
-                3, "DB Connection Close. ({0})".format(self.con.db))
+            logger.writeLog(3,
+                            "DB Connection Close. ({0})".format(self.con.db))
             self.con = None
 
 
@@ -299,23 +305,24 @@ class MySQLSingleSystemWrap:
                 return returnData
 
             except pymysql.MySQLError as err:
-                logger.writeLog(0, "MySQL Error code : %s" %
+                logger.writeLog(0,
+                                "MySQL Error code : %s" %
                                 (str(err.args[0]),))
                 if isinstance(err, pymysql.OperationalError):
                     if retry_count >= 3:
-                        logger.writeLog(
-                            0, "We tried three times in MySQLSingleSystemWrap.")
+                        logger.writeLog(0,
+                                        "We tried three times in MySQLSingleSystemWrap.")
                         raise RuntimeError("Connection Failed!")
                     connected = False
                     sleep_time = 2
-                    logger.writeLog(
-                        3, "Sleep %d seconds before trying reconnect." % (sleep_time,))
+                    logger.writeLog(3,
+                                    "Sleep %d seconds before trying reconnect." % (sleep_time,))
                     time.sleep(sleep_time)
                 else:
                     logger.writeException(err)
                     raise err
             except Exception as ex:
-                raise ex[1] if len(ex) > 1 else ex
+                raise ex
 
     def _connectImpl(self, iniconfig, targetdb=None):
         if self.con:
@@ -349,7 +356,8 @@ class MySQLSingleSystemWrap:
             self.defaultDB = "information_schema"
             targetdb = self.defaultDB
 
-        logger.writeLog(1, "DB Connection Start ({0}).".format(targetdb))
+        logger.writeLog(1,
+                        "DB Connection Start ({0}).".format(targetdb))
         self.con = pymysql.connect(host=db_config['SERVER'],
                                    user=db_config['UID'],
                                    passwd=db_config['PWD'],
@@ -365,9 +373,10 @@ class MySQLSingleSystemWrap:
             try:
                 self.con.close()
             except Exception as ex:
+                logger.writeException(ex)
                 pass
-            logger.writeLog(
-                1, "DB Connection Close. ({0})".format(self.con.db))
+            logger.writeLog(1,
+                            "DB Connection Close. ({0})".format(self.con.db))
             self.con = None
 
 # class CassandraWrap(object):
