@@ -1,3 +1,5 @@
+# reference : https://pypi.org/project/yfinance/
+
 import yfinance as yf
 import json
 
