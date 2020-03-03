@@ -17,18 +17,20 @@ def initLogging(filelogPath,
     Log.propagate = False
 
     if isUseWindow:
-       console = logging.StreamHandler()
-       console.setFormatter(formatter)
-       #Log = logging.Logger(console)
-       Log.addHandler(console)
-       writeLog(0, "Consloe Log Start")
+        console = logging.StreamHandler()
+        console.setFormatter(formatter)
+        #Log = logging.Logger(console)
+        Log.addHandler(console)
+        writeLog(0,
+                 "Consloe Log Start")
 
     filelog = logging.FileHandler(filelogPath, encoding='utf-8')
     filelog.setFormatter(formatter)
     Log.addHandler(filelog)
 
     if not isWorker:
-        writeLog(1, "File logging start")
+        writeLog(1,
+                 "File logging start")
 
     return Log
 
@@ -36,30 +38,36 @@ def initLogging(filelogPath,
 def moveLogFile(fileLogPath,
                 filelogName,
                 filelogDir):
-    writeLog(1, "Clean logging file")
+    writeLog(1,
+             "Clean logging file")
     beforeate = str(util.getBeforeDaytime())
     filelogDir = filelogDir + "/" + beforeate
 
     if not os.path.exists(filelogDir):
         os.makedirs(filelogDir)
-        writeLog(1, "Make new directory : {0}".format(filelogDir))
+        writeLog(1,
+                 "Make new directory : {0}".format(filelogDir))
 
     fileLogMovePath = filelogDir + "/" + filelogName
     if not os.path.exists(fileLogMovePath):
         shutil.move(fileLogPath, filelogDir)
-        writeLog(1, "Move logging file")
+        writeLog(1,
+                 "Move logging file")
     else:
-        writeLog(1, "Logging file is already exist")
+        writeLog(1,
+                 "Logging file is already exist")
 
 
 def releaseLogging(Log):
-    writeLog(1, "End logging")
+    writeLog(1,
+             "End logging")
     try:
         del Log.handlers[:]
         return True
 
     except:
-        writeLog(1, "Fail to end logging")
+        writeLog(1,
+                 "Fail to end logging")
         return False
     logging.shutdown()
 
@@ -92,7 +100,8 @@ def writeException(ex):
     first = True
     for filename, lineno, ftnname, _ in reversed(stack_trace):
         if first:
-            writeLog(0, "Exception : %s:%s(%d) %s %s" %
+            writeLog(0,
+                     "Exception : %s:%s(%d) %s %s" %
                      (basename(filename),
                       ftnname,
                       lineno,
@@ -101,7 +110,8 @@ def writeException(ex):
             first = False
 
         else:
-            writeLog(0, "Call stack : %s:%s(%d)" %
+            writeLog(0,
+                     "Call stack : %s:%s(%d)" %
                      (basename(filename),
                       ftnname,
                       lineno))
