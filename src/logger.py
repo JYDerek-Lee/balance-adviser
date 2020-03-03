@@ -16,12 +16,12 @@ def initLogging(filelogPath,
     Log.setLevel(logging.INFO)
     Log.propagate = False
 
-    # if isUseWindow:
-    #    console = logging.StreamHandler()
-    #    console.setFormatter(formatter)
-    #    #Log = logging.Logger(console)
-    #    Log.addHandler(console)
-    #    writeLog(0, "Consloe Log Start")
+    if isUseWindow:
+       console = logging.StreamHandler()
+       console.setFormatter(formatter)
+       #Log = logging.Logger(console)
+       Log.addHandler(console)
+       writeLog(0, "Consloe Log Start")
 
     filelog = logging.FileHandler(filelogPath, encoding='utf-8')
     filelog.setFormatter(formatter)
