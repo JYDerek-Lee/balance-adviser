@@ -3,7 +3,7 @@ import time
 import re
 import ast
 import pymysql
-import ConfigParser
+# TODO Add ConfigParser and configuration file
 from src import logger
 #from cassandra.auth import PlainTextAuthProvider
 #from cassandra.cluster import Cluster, Session
