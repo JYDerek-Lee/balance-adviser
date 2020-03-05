@@ -19,18 +19,17 @@ def initLogging(filelogPath,
     if isUseWindow:
         console = logging.StreamHandler()
         console.setFormatter(formatter)
-        #Log = logging.Logger(console)
         Log.addHandler(console)
-        writeLog(0,
-                 "Consloe Log Start")
+        write_info_log("Consloe Log Start")
 
-    filelog = logging.FileHandler(filelogPath, encoding='utf-8')
+    filelog = logging.FileHandler(filelogPath,
+                                  mode='w',
+                                  encoding='utf-8')
     filelog.setFormatter(formatter)
     Log.addHandler(filelog)
 
     if not isWorker:
-        writeLog(1,
-                 "File logging start")
+        write_info_log("File logging start")
 
     return Log
 
@@ -74,6 +73,14 @@ def releaseLogging(Log):
 
 def writeLog(level, text):
     logging.log(level, "(%d):%s" % (level, text))
+
+
+def write_warning_log(text):
+    logging.warning("[WARN] %s" % text)
+
+
+def write_info_log(text):
+    logging.info("[INFO] %s" % text)
 
 
 def writePacket(packetkey, text):
