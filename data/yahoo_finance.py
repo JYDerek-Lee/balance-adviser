@@ -20,71 +20,71 @@ class YahooFinance:
         self.tickers = tickers
 
 
-stocks = yf.download(tickers)
-print(stocks.head())
+# stocks = yf.download(tickers)
+# print(stocks.head())
 
-msft = yf.Ticker("MSFT")
+# msft = yf.Ticker("MSFT")
 
-# get stock info
-stock_info = msft.info
+# # get stock info
+# stock_info = msft.info
 
-# get stock info
-msft.info
+# # get stock info
+# msft.info
 
-#parsed = json.loads(stock_info)
-print(json.dumps(stock_info,
-                 indent=4,
-                 sort_keys=True))
+# #parsed = json.loads(stock_info)
+# print(json.dumps(stock_info,
+#                  indent=4,
+#                  sort_keys=True))
 
-# get historical market data
-hist = msft.history(period="max")
+# # get historical market data
+# hist = msft.history(period="max")
 
-# show actions (dividends, splits)
-msft.actions
+# # show actions (dividends, splits)
+# msft.actions
 
-# show dividends
-msft.dividends
+# # show dividends
+# msft.dividends
 
-# show splits
-msft.splits
+# # show splits
+# msft.splits
 
-# show financials
-msft.financials
-msft.quarterly_financials
+# # show financials
+# msft.financials
+# msft.quarterly_financials
 
-# show major holders
-msft.major_holders
+# # show major holders
+# msft.major_holders
 
-# show institutional holders
-msft.institutional_holders
+# # show institutional holders
+# msft.institutional_holders
 
-# show balance heet
-msft.balance_sheet
-msft.quarterly_balance_sheet
+# # show balance heet
+# msft.balance_sheet
+# msft.quarterly_balance_sheet
 
-# show cashflow
-msft.cashflow
-msft.quarterly_cashflow
+# # show cashflow
+# msft.cashflow
+# msft.quarterly_cashflow
 
-# show earnings
-msft.earnings
-msft.quarterly_earnings
+# # show earnings
+# msft.earnings
+# msft.quarterly_earnings
 
-# show sustainability
-msft.sustainability
+# # show sustainability
+# msft.sustainability
 
-# show analysts recommendations
-msft.recommendations
+# # show analysts recommendations
+# msft.recommendations
 
-# show next event (earnings, etc)
-msft.calendar
+# # show next event (earnings, etc)
+# msft.calendar
 
-# show ISIN code - *experimental*
-# ISIN = International Securities Identification Number
-msft.isin
+# # show ISIN code - *experimental*
+# # ISIN = International Securities Identification Number
+# msft.isin
 
-# show options expirations
-msft.options
+# # show options expirations
+# msft.options
 
 # get option chain for specific expiration
 # opt = msft.option_chain('2020-03-03')
