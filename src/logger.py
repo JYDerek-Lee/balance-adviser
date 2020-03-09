@@ -33,12 +33,11 @@ def init_logger(filelogPath,
 
     return Log
 
+
 # TODO Need to modify clearly
-
-
-def moveLogFile(fileLogPath,
-                filelogName,
-                filelogDir):
+def move_log_file(fileLogPath,
+                  filelogName,
+                  filelogDir):
     writeLog(1,
              "Clean logging file")
     beforeate = str(util.getBeforeDaytime())
@@ -93,7 +92,7 @@ def write_error_log(text):
     logging.error("[ERROR] %s" % text)
 
 
-def writePacket(packetkey, text):
+def write_packet(packetkey, text):
     if packetkey is 1:
         outstring = "\n".join(text)
 
@@ -111,7 +110,7 @@ def writePacket(packetkey, text):
     write_info_log("Packet dump detail >> \n%s" % (outstring))
 
 
-def writeException(ex):
+def write_exception(ex):
     stack_trace = traceback.extract_tb(sys.exc_info()[2])
     first = True
     for filename, lineno, ftnname, _ in reversed(stack_trace):
