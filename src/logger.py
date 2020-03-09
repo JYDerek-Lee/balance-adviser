@@ -6,7 +6,7 @@ import logging
 import shutil
 
 
-def initLogging(filelogPath,
+def init_logger(filelogPath,
                 isUseWindow=False,
                 isWorker=True):
     formatter = logging.Formatter("[%(asctime)s.%(msecs)03d %(process)d])%(message)s(%(levelno)s)",
@@ -33,6 +33,8 @@ def initLogging(filelogPath,
 
     return Log
 
+# TODO Need to modify clearly
+
 
 def moveLogFile(fileLogPath,
                 filelogName,
@@ -57,7 +59,7 @@ def moveLogFile(fileLogPath,
                  "Logging file is already exist")
 
 
-def releaseLogging(Log):
+def release_logger(Log):
     writeLog(1,
              "End logging")
     try:
@@ -75,31 +77,38 @@ def writeLog(level, text):
     logging.log(level, "(%d):%s" % (level, text))
 
 
-def write_warning_log(text):
-    logging.warning("[WARN] %s" % text)
-
-
 def write_info_log(text):
     logging.info("[INFO] %s" % text)
 
 
+def write_warning_log(text):
+    logging.warning("[WARN] %s" % text)
+
+
+def write_critical_log(text):
+    logging.critical("[CRIT] %s" % text)
+
+
+def write_error_log(text):
+    logging.error("[ERROR] %s" % text)
+
+
 def writePacket(packetkey, text):
-    level = 3
     if packetkey is 1:
         outstring = "\n".join(text)
+
     elif packetkey is 2:
         dictlist = []
         for key, value in text.iteritems():
             temp = str(key) + " : " + str(value)
             dictlist.append(temp)
         outstring = "\n".join(dictlist)
+
     else:
-        logging.log(level,
-                    "Input key error " % (level))
+        write_critical_log("Input key error")
         return
 
-    logging.log(level,
-                "(%d) Packet dump detail >> \n%s" % (level, outstring))
+    write_info_log("Packet dump detail >> \n%s" % (outstring))
 
 
 def writeException(ex):
@@ -107,18 +116,16 @@ def writeException(ex):
     first = True
     for filename, lineno, ftnname, _ in reversed(stack_trace):
         if first:
-            writeLog(0,
-                     "Exception : %s:%s(%d) %s %s" %
-                     (basename(filename),
-                      ftnname,
-                      lineno,
-                      type(ex),
-                      ex))
+            write_error_log("Exception : %s:%s(%d) %s %s" %
+                            (basename(filename),
+                             ftnname,
+                             lineno,
+                             type(ex),
+                                ex))
             first = False
 
         else:
-            writeLog(0,
-                     "Call stack : %s:%s(%d)" %
-                     (basename(filename),
-                      ftnname,
-                      lineno))
+            write_error_log("Call stack : %s:%s(%d)" %
+                            (basename(filename),
+                             ftnname,
+                             lineno))
