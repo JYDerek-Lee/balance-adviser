@@ -7,8 +7,8 @@ def make_instance():
     yfnce = yf.YahooFinance()
 
 
-handler = logger.initLogging("Temp.log",
+handler = logger.init_logger("Temp.log",
                              True)
 make_instance()
 logger.write_info_log("aaaaaaaa")
-logger.releaseLogging(handler)
+logger.release_logger(handler)

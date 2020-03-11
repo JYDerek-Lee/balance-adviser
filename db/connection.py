@@ -16,13 +16,13 @@ class MySQLWrap(object):
         self.app = app
 
     def __del__(self):
-        self._closeImpl()
+        self._close_impl()
 
     def connect(self):
         if self.con:
-            self._closeImpl()
+            self._close_impl()
 
-        self._connectImpl()
+        self._connect_impl()
 
     @staticmethod
     def execute(app, query, commit=False):
@@ -77,15 +77,15 @@ class MySQLWrap(object):
                                     "Sleep %d seconds before trying reconnect." % (sleep_time,))
                     time.sleep(sleep_time)
                 else:
-                    logger.writeException(err)
+                    logger.write_exception(err)
                     raise err
 
             except Exception as ex:
                 raise ex
 
-    def _connectImpl(self):
+    def _connect_impl(self):
         if self.con:
-            self._closeImpl()
+            self._close_impl()
 
         db_config_str = self.app.iniconfig.get('db', 'connection')
         db_config = ast.literal_eval(
@@ -117,12 +117,12 @@ class MySQLWrap(object):
         logger.writeLog(1,
                         "DB Connection Succesful. ({0})".format(self.con.db))
 
-    def _closeImpl(self):
+    def _close_impl(self):
         if self.con:
             try:
                 self.con.close()
             except Exception as ex:
-                logger.writeException(ex)
+                logger.write_exception(ex)
                 pass
             logger.writeLog(3,
                             "DB Connection Close. ({0})".format(self.con.db))
@@ -135,16 +135,16 @@ class MySQLLogWrap(object):
         self.app = app
 
     def __del__(self):
-        self._closeImpl()
+        self._close_impl()
 
     def connect(self):
         if self.con:
-            self._closeImpl()
-        self._connectImpl()
+            self._close_impl()
+        self._connect_impl()
 
     def disconnect(self):
         if self.con:
-            self._closeImpl()
+            self._close_impl()
 
     @staticmethod
     def execute(app, query, commit=False):
@@ -199,13 +199,13 @@ class MySQLLogWrap(object):
                                     "Sleep %d seconds before trying reconnect." % (sleep_time,))
                     time.sleep(sleep_time)
                 else:
-                    logger.writeException(err)
+                    logger.write_exception(err)
                     raise err
             except Exception as ex:
                 raise ex
 
     @staticmethod
-    def endConnection(app, commit=False):
+    def clear_connection(app, commit=False):
         try:
             mysql_pre = app.app_ctx_globals_class.mysql
             assert mysql_pre
@@ -218,12 +218,12 @@ class MySQLLogWrap(object):
             mysql_pre.disconnect()
         except pymysql.MySQLError as err:
             logger.writeLog(0,
-                            "MySQL endConnection Error code : %s" %
+                            "MySQL clear connection Error code : %s" %
                             (str(err.args[0]),))
 
-    def _connectImpl(self):
+    def _connect_impl(self):
         if self.con:
-            self._closeImpl()
+            self._close_impl()
 
         db_config_str = self.app.iniconfig.get('log_db', 'connection')
         db_config = ast.literal_eval(
@@ -255,7 +255,7 @@ class MySQLLogWrap(object):
         logger.writeLog(1,
                         "DB Connection Succesful. ({0})".format(db_config['DATABASE']))
 
-    def _closeImpl(self):
+    def _close_impl(self):
         if self.con:
             try:
                 self.con.close()
@@ -272,17 +272,17 @@ class MySQLSingleSystemWrap:
         self.defaultDB = None
 
     def __del__(self):
-        self._closeImpl()
+        self._close_impl()
 
     def connect(self, iniconfig, targetdb=None):
         if self.con:
-            self._closeImpl()
+            self._close_impl()
 
-        self._connectImpl(iniconfig, targetdb)
+        self._connect_impl(iniconfig, targetdb)
 
     def disconnect(self):
         if self.con:
-            self._closeImpl()
+            self._close_impl()
 
     @staticmethod
     def execute(self, query, iniconfig, targetdb=None, commit=False):
@@ -318,14 +318,14 @@ class MySQLSingleSystemWrap:
                                     "Sleep %d seconds before trying reconnect." % (sleep_time,))
                     time.sleep(sleep_time)
                 else:
-                    logger.writeException(err)
+                    logger.write_exception(err)
                     raise err
             except Exception as ex:
                 raise ex
 
-    def _connectImpl(self, iniconfig, targetdb=None):
+    def _connect_impl(self, iniconfig, targetdb=None):
         if self.con:
-            self._closeImpl()
+            self._close_impl()
 
         if targetdb == 2:
             db_config_str = iniconfig.get('log_db', 'connection')
@@ -367,12 +367,12 @@ class MySQLSingleSystemWrap:
         logger.writeLog(
             1, "DB Connection Succesful. ({0})".format(self.con.db))
 
-    def _closeImpl(self):
+    def _close_impl(self):
         if self.con:
             try:
                 self.con.close()
             except Exception as ex:
-                logger.writeException(ex)
+                logger.write_exception(ex)
                 pass
             logger.writeLog(1,
                             "DB Connection Close. ({0})".format(self.con.db))
@@ -385,13 +385,13 @@ class MySQLSingleSystemWrap:
 #        self.app = app
 
 #    def __del__(self):
-#        self._closeImpl()
+#        self._close_impl()
 
 #    def connect(self):
 #        if self.con:
-#            self._closeImpl()
+#            self._close_impl()
 
-#        self._connectImpl()
+#        self._connect_impl()
 
 #    @staticmethod
 #    def execute(app, query, Paremeters=None):
@@ -421,7 +421,7 @@ class MySQLSingleSystemWrap:
 #                return function(cassandra.session, query, Parameters)
 
 #            except Exception as err:
-#                logger.writeException(err)
+#                logger.write_exception(err)
 #                if retry_count >= 3:
 #                    logger.writeLog(0, "We tried three times.")
 #                    raise RuntimeError("Connection Failed!")
@@ -431,9 +431,9 @@ class MySQLSingleSystemWrap:
 #                time.sleep(sleep_time)
 
 
-#    def _connectImpl(self):
+#    def _connect_impl(self):
 #        if self.con:
-#            self._closeImpl()
+#            self._close_impl()
 
 #        cassandra_nodes_str = self.app.iniconfig.get('log_db', 'node')
 #        cassandra_nodes = ast.literal_eval('[\''+re.sub(',', '\',\'', cassandra_nodes_str)+'\']')
@@ -454,7 +454,7 @@ class MySQLSingleSystemWrap:
 
 #        logger.writeLog(3, "Log DB Connection Succesful.")
 
-#    def _closeImpl(self):
+#    def _close_impl(self):
 #        if self.session:
 #            try:
 #                self.session.shutdown()
