@@ -1,19 +1,18 @@
 # reference : https://pypi.org/project/yfinance/
 
+import requests
 import yfinance as yf
 import json
 
 
 class YahooFinance:
-    def __init__(self,
-                 tickers=None):
+    def __init__(self, tickers=None):
         self.tickers = tickers
 
     def __del__(self):
         pass
 
-    def set_tickers(self,
-                    tickers):
+    def set_tickers(self, tickers):
         if tickers is None:
             # logging error
             return None
