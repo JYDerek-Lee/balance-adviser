@@ -3,11 +3,13 @@ import time
 import re
 import ast
 import pymysql
+
 # TODO Add ConfigParser and configuration file
 from src import logger
-#from cassandra.auth import PlainTextAuthProvider
-#from cassandra.cluster import Cluster, Session
-#from cassandra.policies import RoundRobinPolicy
+
+# from cassandra.auth import PlainTextAuthProvider
+# from cassandra.cluster import Cluster, Session
+# from cassandra.policies import RoundRobinPolicy
 
 
 class MySQLWrap(object):
@@ -64,17 +66,16 @@ class MySQLWrap(object):
                 return cursor
 
             except pymysql.MySQLError as err:
-                logger.writeLog(0, "MySQL Error code : %s" %
-                                (str(err.args[0]),))
+                logger.writeLog(0, "MySQL Error code : %s" % (str(err.args[0]),))
                 if isinstance(err, pymysql.OperationalError):
                     if retry_count >= 3:
-                        logger.writeLog(0,
-                                        "We tried three times.")
+                        logger.writeLog(0, "We tried three times.")
                         raise RuntimeError("Connection Failed!")
                     connected = False
                     sleep_time = 2
-                    logger.writeLog(3,
-                                    "Sleep %d seconds before trying reconnect." % (sleep_time,))
+                    logger.writeLog(
+                        3, "Sleep %d seconds before trying reconnect." % (sleep_time,)
+                    )
                     time.sleep(sleep_time)
                 else:
                     logger.write_exception(err)
@@ -87,35 +88,41 @@ class MySQLWrap(object):
         if self.con:
             self._close_impl()
 
-        db_config_str = self.app.iniconfig.get('db', 'connection')
+        db_config_str = self.app.iniconfig.get("db", "connection")
         db_config = ast.literal_eval(
-            '{\''+re.sub('=', '\':\'', re.sub(';', '\',\'', db_config_str))+'\'}')
+            "{'" + re.sub("=", "':'", re.sub(";", "','", db_config_str)) + "'}"
+        )
         try:
-            db_config['CONNECTION_CHIPER']
+            db_config["CONNECTION_CHIPER"]
         except:
-            db_config['CONNECTION_CHIPER'] = 1
+            db_config["CONNECTION_CHIPER"] = 1
 
-        db_config['PWD'] = db_config['PWD'] if int(
-            db_config['CONNECTION_CHIPER']) == 1 else util.decryptString(db_config['PWD'])
-        if db_config['PWD'] == -1:
+        db_config["PWD"] = (
+            db_config["PWD"]
+            if int(db_config["CONNECTION_CHIPER"]) == 1
+            else util.decryptString(db_config["PWD"])
+        )
+        if db_config["PWD"] == -1:
             raise AttributeError("Password Error", 1)
-        db_config['UID'] = db_config['UID'] if int(
-            db_config['CONNECTION_CHIPER']) == 1 else util.decryptString(db_config['UID'])
-        if db_config['UID'] == -1:
+        db_config["UID"] = (
+            db_config["UID"]
+            if int(db_config["CONNECTION_CHIPER"]) == 1
+            else util.decryptString(db_config["UID"])
+        )
+        if db_config["UID"] == -1:
             raise AttributeError("UID Error", 1)
 
-        logger.writeLog(1,
-                        "DB Connection Start ({0}).".format(
-                            db_config['DATABASE']))
-        self.con = pymysql.connect(host=db_config['SERVER'],
-                                   user=db_config['UID'],
-                                   passwd=db_config['PWD'],
-                                   db=db_config['DATABASE'],
-                                   port=int(db_config['PORT']),
-                                   charset='utf8mb4')
+        logger.writeLog(1, "DB Connection Start ({0}).".format(db_config["DATABASE"]))
+        self.con = pymysql.connect(
+            host=db_config["SERVER"],
+            user=db_config["UID"],
+            passwd=db_config["PWD"],
+            db=db_config["DATABASE"],
+            port=int(db_config["PORT"]),
+            charset="utf8mb4",
+        )
         self.con.autocommit(True)
-        logger.writeLog(1,
-                        "DB Connection Succesful. ({0})".format(self.con.db))
+        logger.writeLog(1, "DB Connection Succesful. ({0})".format(self.con.db))
 
     def _close_impl(self):
         if self.con:
@@ -124,8 +131,7 @@ class MySQLWrap(object):
             except Exception as ex:
                 logger.write_exception(ex)
                 pass
-            logger.writeLog(3,
-                            "DB Connection Close. ({0})".format(self.con.db))
+            logger.writeLog(3, "DB Connection Close. ({0})".format(self.con.db))
             self.con = None
 
 
@@ -186,17 +192,16 @@ class MySQLLogWrap(object):
                 return cursor
 
             except pymysql.MySQLError as err:
-                logger.writeLog(0,
-                                "MySQL Error code : %s" %
-                                (str(err.args[0]),))
+                logger.writeLog(0, "MySQL Error code : %s" % (str(err.args[0]),))
                 if isinstance(err, pymysql.OperationalError):
                     if retry_count >= 3:
                         logger.writeLog(0, "We tried three times.")
                         raise RuntimeError("Connection Failed!")
                     connected = False
                     sleep_time = 2
-                    logger.writeLog(3,
-                                    "Sleep %d seconds before trying reconnect." % (sleep_time,))
+                    logger.writeLog(
+                        3, "Sleep %d seconds before trying reconnect." % (sleep_time,)
+                    )
                     time.sleep(sleep_time)
                 else:
                     logger.write_exception(err)
@@ -210,50 +215,57 @@ class MySQLLogWrap(object):
             mysql_pre = app.app_ctx_globals_class.mysql
             assert mysql_pre
         except Exception:
-            logger.writeLog(3,
-                            "Initiate connection")
+            logger.writeLog(3, "Initiate connection")
             mysql_pre = app.app_ctx_globals_class.mysql = MySQLLogWrap(app)
 
         try:
             mysql_pre.disconnect()
         except pymysql.MySQLError as err:
-            logger.writeLog(0,
-                            "MySQL clear connection Error code : %s" %
-                            (str(err.args[0]),))
+            logger.writeLog(
+                0, "MySQL clear connection Error code : %s" % (str(err.args[0]),)
+            )
 
     def _connect_impl(self):
         if self.con:
             self._close_impl()
 
-        db_config_str = self.app.iniconfig.get('log_db', 'connection')
+        db_config_str = self.app.iniconfig.get("log_db", "connection")
         db_config = ast.literal_eval(
-            '{\''+re.sub('=', '\':\'', re.sub(';', '\',\'', db_config_str))+'\'}')
+            "{'" + re.sub("=", "':'", re.sub(";", "','", db_config_str)) + "'}"
+        )
         try:
-            db_config['CONNECTION_CHIPER']
+            db_config["CONNECTION_CHIPER"]
         except:
-            db_config['CONNECTION_CHIPER'] = 1
+            db_config["CONNECTION_CHIPER"] = 1
 
-        db_config['PWD'] = db_config['PWD'] if int(
-            db_config['CONNECTION_CHIPER']) == 1 else util.decryptString(db_config['PWD'])
-        if db_config['PWD'] == -1:
+        db_config["PWD"] = (
+            db_config["PWD"]
+            if int(db_config["CONNECTION_CHIPER"]) == 1
+            else util.decryptString(db_config["PWD"])
+        )
+        if db_config["PWD"] == -1:
             raise AttributeError("Password Error", 1)
-        db_config['UID'] = db_config['UID'] if int(
-            db_config['CONNECTION_CHIPER']) == 1 else util.decryptString(db_config['UID'])
-        if db_config['UID'] == -1:
+        db_config["UID"] = (
+            db_config["UID"]
+            if int(db_config["CONNECTION_CHIPER"]) == 1
+            else util.decryptString(db_config["UID"])
+        )
+        if db_config["UID"] == -1:
             raise AttributeError("UID Error", 1)
 
-        logger.writeLog(1,
-                        "DB Connection Start ({0}).".format(
-                            db_config['DATABASE']))
-        self.con = pymysql.connect(host=db_config['SERVER'],
-                                   user=db_config['UID'],
-                                   passwd=db_config['PWD'],
-                                   db=db_config['DATABASE'],
-                                   port=int(db_config['PORT']),
-                                   charset='utf8mb4')
+        logger.writeLog(1, "DB Connection Start ({0}).".format(db_config["DATABASE"]))
+        self.con = pymysql.connect(
+            host=db_config["SERVER"],
+            user=db_config["UID"],
+            passwd=db_config["PWD"],
+            db=db_config["DATABASE"],
+            port=int(db_config["PORT"]),
+            charset="utf8mb4",
+        )
         self.con.autocommit(True)
-        logger.writeLog(1,
-                        "DB Connection Succesful. ({0})".format(db_config['DATABASE']))
+        logger.writeLog(
+            1, "DB Connection Succesful. ({0})".format(db_config["DATABASE"])
+        )
 
     def _close_impl(self):
         if self.con:
@@ -261,8 +273,7 @@ class MySQLLogWrap(object):
                 self.con.close()
             except Exception:
                 pass
-            logger.writeLog(3,
-                            "DB Connection Close. ({0})".format(self.con.db))
+            logger.writeLog(3, "DB Connection Close. ({0})".format(self.con.db))
             self.con = None
 
 
@@ -305,17 +316,17 @@ class MySQLSingleSystemWrap:
                 return returnData
 
             except pymysql.MySQLError as err:
-                logger.writeLog(0,
-                                "MySQL Error code : %s" %
-                                (str(err.args[0]),))
+                logger.writeLog(0, "MySQL Error code : %s" % (str(err.args[0]),))
                 if isinstance(err, pymysql.OperationalError):
                     if retry_count >= 3:
-                        logger.writeLog(0,
-                                        "We tried three times in MySQLSingleSystemWrap.")
+                        logger.writeLog(
+                            0, "We tried three times in MySQLSingleSystemWrap."
+                        )
                         raise RuntimeError("Connection Failed!")
                     sleep_time = 2
-                    logger.writeLog(3,
-                                    "Sleep %d seconds before trying reconnect." % (sleep_time,))
+                    logger.writeLog(
+                        3, "Sleep %d seconds before trying reconnect." % (sleep_time,)
+                    )
                     time.sleep(sleep_time)
                 else:
                     logger.write_exception(err)
@@ -328,44 +339,51 @@ class MySQLSingleSystemWrap:
             self._close_impl()
 
         if targetdb == 2:
-            db_config_str = iniconfig.get('log_db', 'connection')
+            db_config_str = iniconfig.get("log_db", "connection")
         else:
-            db_config_str = iniconfig.get('db', 'connection')
+            db_config_str = iniconfig.get("db", "connection")
 
         db_config = ast.literal_eval(
-            '{\''+re.sub('=', '\':\'', re.sub(';', '\',\'', db_config_str))+'\'}')
+            "{'" + re.sub("=", "':'", re.sub(";", "','", db_config_str)) + "'}"
+        )
         try:
-            db_config['CONNECTION_CHIPER']
+            db_config["CONNECTION_CHIPER"]
         except:
-            db_config['CONNECTION_CHIPER'] = 1
+            db_config["CONNECTION_CHIPER"] = 1
 
-        db_config['PWD'] = db_config['PWD'] if int(
-            db_config['CONNECTION_CHIPER']) == 1 else util.decryptString(db_config['PWD'])
-        if db_config['PWD'] == -1:
+        db_config["PWD"] = (
+            db_config["PWD"]
+            if int(db_config["CONNECTION_CHIPER"]) == 1
+            else util.decryptString(db_config["PWD"])
+        )
+        if db_config["PWD"] == -1:
             raise AttributeError("Password Error", 1)
-        db_config['UID'] = db_config['UID'] if int(
-            db_config['CONNECTION_CHIPER']) == 1 else util.decryptString(db_config['UID'])
-        if db_config['UID'] == -1:
+        db_config["UID"] = (
+            db_config["UID"]
+            if int(db_config["CONNECTION_CHIPER"]) == 1
+            else util.decryptString(db_config["UID"])
+        )
+        if db_config["UID"] == -1:
             raise AttributeError("UID Error", 1)
 
         if targetdb == 1 or targetdb == 2:
-            self.defaultDB = db_config['DATABASE']
+            self.defaultDB = db_config["DATABASE"]
             targetdb = self.defaultDB
         else:
             self.defaultDB = "information_schema"
             targetdb = self.defaultDB
 
-        logger.writeLog(1,
-                        "DB Connection Start ({0}).".format(targetdb))
-        self.con = pymysql.connect(host=db_config['SERVER'],
-                                   user=db_config['UID'],
-                                   passwd=db_config['PWD'],
-                                   db=targetdb,
-                                   port=int(db_config['PORT']),
-                                   charset='utf8')
+        logger.writeLog(1, "DB Connection Start ({0}).".format(targetdb))
+        self.con = pymysql.connect(
+            host=db_config["SERVER"],
+            user=db_config["UID"],
+            passwd=db_config["PWD"],
+            db=targetdb,
+            port=int(db_config["PORT"]),
+            charset="utf8",
+        )
         self.con.autocommit(True)
-        logger.writeLog(
-            1, "DB Connection Succesful. ({0})".format(self.con.db))
+        logger.writeLog(1, "DB Connection Succesful. ({0})".format(self.con.db))
 
     def _close_impl(self):
         if self.con:
@@ -374,9 +392,9 @@ class MySQLSingleSystemWrap:
             except Exception as ex:
                 logger.write_exception(ex)
                 pass
-            logger.writeLog(1,
-                            "DB Connection Close. ({0})".format(self.con.db))
+            logger.writeLog(1, "DB Connection Close. ({0})".format(self.con.db))
             self.con = None
+
 
 # class CassandraWrap(object):
 #    def __init__(self, app):
